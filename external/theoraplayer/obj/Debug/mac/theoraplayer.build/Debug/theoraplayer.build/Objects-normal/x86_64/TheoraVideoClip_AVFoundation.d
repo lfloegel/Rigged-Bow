@@ -1,2 +1,2 @@
 dependencies: \
-  /Users/larafs/Desktop/chai3d-3.2.0/external/theoraplayer/src/AVFoundation/TheoraVideoClip_AVFoundation.mm
+  /Users/erinpwoo/Desktop/Rigged-Bow/external/theoraplayer/src/AVFoundation/TheoraVideoClip_AVFoundation.mm

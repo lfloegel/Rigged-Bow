@@ -1,7 +1,7 @@
 dependencies: \
-  /Users/larafs/Desktop/chai3d-3.2.0/external/theoraplayer/src/TheoraAsync.cpp \
-  /Users/larafs/Desktop/chai3d-3.2.0/external/theoraplayer/include/theoraplayer/TheoraAsync.h \
-  /Users/larafs/Desktop/chai3d-3.2.0/external/theoraplayer/include/theoraplayer/TheoraUtil.h \
-  /Users/larafs/Desktop/chai3d-3.2.0/external/theoraplayer/include/theoraplayer/TheoraVideoManager.h \
-  /Users/larafs/Desktop/chai3d-3.2.0/external/theoraplayer/include/theoraplayer/TheoraExport.h \
-  /Users/larafs/Desktop/chai3d-3.2.0/external/theoraplayer/include/theoraplayer/TheoraVideoClip.h
+  /Users/erinpwoo/Desktop/Rigged-Bow/external/theoraplayer/src/TheoraAsync.cpp \
+  /Users/erinpwoo/Desktop/Rigged-Bow/external/theoraplayer/include/theoraplayer/TheoraAsync.h \
+  /Users/erinpwoo/Desktop/Rigged-Bow/external/theoraplayer/include/theoraplayer/TheoraUtil.h \
+  /Users/erinpwoo/Desktop/Rigged-Bow/external/theoraplayer/include/theoraplayer/TheoraVideoManager.h \
+  /Users/erinpwoo/Desktop/Rigged-Bow/external/theoraplayer/include/theoraplayer/TheoraExport.h \
+  /Users/erinpwoo/Desktop/Rigged-Bow/external/theoraplayer/include/theoraplayer/TheoraVideoClip.h

@@ -80,6 +80,8 @@ cWorld* world;
 // a camera to render the world in the window display
 cCamera* camera;
 
+cShapeSphere* b1;
+cShapeSphere* b2;
 // a light source to illuminate the objects in the world
 cSpotLight *light;
 
@@ -100,6 +102,7 @@ cMesh* cylinder;
 //cMultiSegment* segments;
 cMultiMesh* turntable;
 
+cShapeLine* bowstr;
 // a colored background
 cBackground* background;
 
@@ -348,6 +351,15 @@ int main(int argc, char* argv[])
     tool = new cToolCursor(world);
     world->addChild(tool);
 
+    bowstr = new cShapeLine();
+    world->addChild(bowstr);
+    
+    //adding bow string points
+    b1 = new cShapeSphere(.01);
+    b2 = new cShapeSphere(.01);
+    world->addChild(b1);
+    b1->setLocalPos(.2,0,.4);
+    b2->setLocalPos(.2,0,-.4);
     // connect the haptic device to the tool
     tool->setHapticDevice(hapticDevice);
 
@@ -731,6 +743,12 @@ void errorCallback(int a_error, const char* a_description)
 }
 
 //------------------------------------------------------------------------------
+
+void updateBowString() {
+    
+}
+
+//---------
 
 void keyCallback(GLFWwindow* a_window, int a_key, int a_scancode, int a_action, int a_mods)
 {

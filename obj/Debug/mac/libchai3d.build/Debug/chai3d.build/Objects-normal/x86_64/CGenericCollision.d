@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/larafs/Desktop/chai3d-3.2.0/src/collisions/CGenericCollision.cpp \
+  /Users/erinpwoo/Desktop/Rigged-Bow/src/collisions/CGenericCollision.cpp \
   src/collisions/CGenericCollision.h src/collisions/CCollisionBasics.h \
   src/math/CVector3d.h src/system/CString.h src/system/CGlobals.h \
   src/math/CConstants.h external/Eigen/Eigen/Eigen \

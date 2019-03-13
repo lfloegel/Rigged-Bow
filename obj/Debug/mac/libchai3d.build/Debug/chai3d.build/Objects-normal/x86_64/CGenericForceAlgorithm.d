@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/larafs/Desktop/chai3d-3.2.0/src/forces/CGenericForceAlgorithm.cpp \
+  /Users/erinpwoo/Desktop/Rigged-Bow/src/forces/CGenericForceAlgorithm.cpp \
   src/forces/CGenericForceAlgorithm.h src/math/CVector3d.h \
   src/system/CString.h src/system/CGlobals.h src/math/CConstants.h \
   external/Eigen/Eigen/Eigen external/Eigen/Eigen/Dense \

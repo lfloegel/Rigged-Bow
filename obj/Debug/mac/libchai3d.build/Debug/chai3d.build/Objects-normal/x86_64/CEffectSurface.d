@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/larafs/Desktop/chai3d-3.2.0/src/effects/CEffectSurface.cpp \
+  /Users/erinpwoo/Desktop/Rigged-Bow/src/effects/CEffectSurface.cpp \
   src/effects/CEffectSurface.h src/effects/CGenericEffect.h \
   src/math/CVector3d.h src/system/CString.h src/system/CGlobals.h \
   src/math/CConstants.h external/Eigen/Eigen/Eigen \

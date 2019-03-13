@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/larafs/Desktop/chai3d-3.2.0/src/lighting/CDirectionalLight.cpp \
+  /Users/erinpwoo/Desktop/Rigged-Bow/src/lighting/CDirectionalLight.cpp \
   src/lighting/CDirectionalLight.h src/lighting/CGenericLight.h \
   src/graphics/CColor.h src/math/CMaths.h src/math/CTransform.h \
   src/math/CMatrix3d.h src/math/CConstants.h src/system/CGlobals.h \

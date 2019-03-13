@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/larafs/Desktop/chai3d-3.2.0/external/theoraplayer/external/vorbis/lib/vorbisenc.c \
+  /Users/erinpwoo/Desktop/Rigged-Bow/external/theoraplayer/external/vorbis/lib/vorbisenc.c \
   external/vorbis/include/vorbis/codec.h external/ogg/include/ogg/ogg.h \
   external/ogg/include/ogg/os_types.h \
   external/vorbis/include/vorbis/vorbisenc.h \
@@ -10,9 +10,9 @@ dependencies: \
   external/vorbis/lib/os.h external/vorbis/lib/misc.h \
   external/vorbis/lib/highlevel.h external/vorbis/lib/modes/setup_44.h \
   external/vorbis/lib/modes/floor_all.h \
-  /Users/larafs/Desktop/chai3d-3.2.0/external/theoraplayer/external/vorbis/lib/backends.h \
+  /Users/erinpwoo/Desktop/Rigged-Bow/external/theoraplayer/external/vorbis/lib/backends.h \
   external/vorbis/lib/books/floor/floor_books.h \
-  /Users/larafs/Desktop/chai3d-3.2.0/external/theoraplayer/external/vorbis/lib/codebook.h \
+  /Users/erinpwoo/Desktop/Rigged-Bow/external/theoraplayer/external/vorbis/lib/codebook.h \
   external/vorbis/lib/modes/residue_44.h \
   external/vorbis/lib/books/coupled/res_books_stereo.h \
   external/vorbis/lib/modes/psych_44.h \

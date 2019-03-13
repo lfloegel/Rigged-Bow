@@ -1,4 +1,4 @@
-dependencies: /Users/larafs/Desktop/chai3d-3.2.0/src/graphics/CFont.cpp \
+dependencies: /Users/erinpwoo/Desktop/Rigged-Bow/src/graphics/CFont.cpp \
   src/graphics/CFont.h src/system/CGlobals.h src/materials/CTexture2d.h \
   src/graphics/CColor.h src/math/CMaths.h src/math/CTransform.h \
   src/math/CMatrix3d.h src/math/CConstants.h external/Eigen/Eigen/Eigen \

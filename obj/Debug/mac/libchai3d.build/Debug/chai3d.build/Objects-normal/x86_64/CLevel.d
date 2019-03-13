@@ -1,4 +1,4 @@
-dependencies: /Users/larafs/Desktop/chai3d-3.2.0/src/widgets/CLevel.cpp \
+dependencies: /Users/erinpwoo/Desktop/Rigged-Bow/src/widgets/CLevel.cpp \
   src/widgets/CLevel.h src/widgets/CGenericWidget.h src/world/CMesh.h \
   src/world/CGenericObject.h src/collisions/CCollisionBasics.h \
   src/math/CVector3d.h src/system/CString.h src/system/CGlobals.h \

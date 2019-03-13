@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/larafs/Desktop/chai3d-3.2.0/src/shaders/CShaderProgram.cpp \
+  /Users/erinpwoo/Desktop/Rigged-Bow/src/shaders/CShaderProgram.cpp \
   src/shaders/CShaderProgram.h src/shaders/CShader.h \
   src/system/CGlobals.h src/system/CString.h src/math/CConstants.h \
   external/Eigen/Eigen/Eigen external/Eigen/Eigen/Dense \
