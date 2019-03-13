@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/larafs/Desktop/chai3d-3.2.0/examples/GLFW/24-turntable/24-turntable.cpp \
+  /Users/erinpwoo/Desktop/Rigged-Bow/examples/GLFW/24-turntable/24-turntable.cpp \
   src/chai3d.h src/audio/CAudioBuffer.h src/math/CMaths.h \
   src/math/CTransform.h src/math/CMatrix3d.h src/math/CConstants.h \
   src/system/CGlobals.h external/Eigen/Eigen/Eigen \

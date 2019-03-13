@@ -102,7 +102,9 @@ cMesh* cylinder;
 //cMultiSegment* segments;
 cMultiMesh* turntable;
 
-cShapeLine* bowstr;
+cShapeLine* top;
+
+cShapeLine* bottom;
 // a colored background
 cBackground* background;
 
@@ -351,9 +353,11 @@ int main(int argc, char* argv[])
     tool = new cToolCursor(world);
     world->addChild(tool);
 
-    bowstr = new cShapeLine();
-    world->addChild(bowstr);
     
+    top = new cShapeLine(cVector3d(.2,0,.4), cVector3d(0.0, 0.0, 0.0));
+    world -> addChild(top);
+    bottom = new cShapeLine(cVector3d(0.0, 0.0, 0.0), cVector3d(.2,0,-.4));
+    world -> addChild(bottom);
     //adding bow string points
     b1 = new cShapeSphere(.01);
     b2 = new cShapeSphere(.01);
@@ -520,17 +524,17 @@ int main(int argc, char* argv[])
 
     // add object to world
     world->addChild(cylinder);
-
+    
     // build mesh using a cylinder primitive
-    cCreatePipe(cylinder, 
-                0.80,
-                0.001,
-                0.001,
-                32,
-                1,
-                cVector3d(-0.05,-0.20, 0.0), 
-                cMatrix3d(cDegToRad(0), cDegToRad(0), cDegToRad(170), C_EULER_ORDER_XYZ)
-                );
+//    cCreatePipe(cylinder,
+//                0.80,
+//                0.001,
+//                0.001,
+//                32,
+//                1,
+//                cVector3d(-0.05,-0.20, 0.0),
+//                cMatrix3d(cDegToRad(0), cDegToRad(0), cDegToRad(170), C_EULER_ORDER_XYZ)
+//                );
 
     // set material properties
     cylinder->m_material->setBlueCornflower();
@@ -920,6 +924,7 @@ void updateHaptics(void)
             // check if at least one contact has occurred
             if (tool->m_hapticPoint->getNumCollisionEvents() > 0)
             {
+                
                 // get contact event
                 cCollisionEvent* collisionEvent = tool->m_hapticPoint->getCollisionEvent(0);
 
@@ -947,7 +952,7 @@ void updateHaptics(void)
         //
         else if ((state == SELECTION) && (button == true))
         {
-            // compute new tranformation of object in global coordinates
+             //compute new tranformation of object in global coordinates
             cTransform world_T_object = world_T_tool * tool_T_object;
 
             // compute new tranformation of object in local coordinates
@@ -956,10 +961,16 @@ void updateHaptics(void)
             cTransform parent_T_object = parent_T_world * world_T_object;
 
             // assign new local transformation to object
-            object->setLocalTransform(parent_T_object);
-
-            // set zero forces when manipulating objects
-            tool->setDeviceGlobalForce(0.0, 0.0, 0.0);
+            //object->setLocalTransform(parent_T_object);
+//
+//            // set zero forces when manipulating objects
+//            tool->setDeviceGlobalForce(0.0, 0.0, 0.0);
+            
+            cVector3d position;
+            hapticDevice->getPosition(position);
+            
+            top->m_pointB = parent_T_object.getLocalPos();
+            bottom->m_pointA = parent_T_object.getLocalPos();
         }
 
         //
@@ -969,6 +980,8 @@ void updateHaptics(void)
         else
         {
             state = IDLE;
+            top->m_pointB = cVector3d(0,0,0);
+            bottom->m_pointA = cVector3d(0,0,0);
         }
 
 
