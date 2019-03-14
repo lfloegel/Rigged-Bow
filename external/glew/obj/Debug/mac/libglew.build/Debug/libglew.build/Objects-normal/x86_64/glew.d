@@ -1,2 +1,2 @@
-dependencies: /Users/erinpwoo/Desktop/Rigged-Bow/external/glew/src/glew.c \
+dependencies: /Users/larafs/Desktop/chai3d-3.2.0/external/glew/src/glew.c \
   include/GL/glew.h

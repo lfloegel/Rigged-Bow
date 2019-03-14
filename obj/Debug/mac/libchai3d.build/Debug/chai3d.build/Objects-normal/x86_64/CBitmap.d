@@ -1,4 +1,4 @@
-dependencies: /Users/erinpwoo/Desktop/Rigged-Bow/src/widgets/CBitmap.cpp \
+dependencies: /Users/larafs/Desktop/chai3d-3.2.0/src/widgets/CBitmap.cpp \
   src/widgets/CBitmap.h src/widgets/CPanel.h \
   src/widgets/CGenericWidget.h src/world/CMesh.h \
   src/world/CGenericObject.h src/collisions/CCollisionBasics.h \

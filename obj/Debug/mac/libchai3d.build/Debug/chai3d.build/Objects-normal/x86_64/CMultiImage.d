@@ -1,6 +1,6 @@
 dependencies: \
-  /Users/erinpwoo/Desktop/Rigged-Bow/src/graphics/CMultiImage.cpp \
-  /Users/erinpwoo/Desktop/Rigged-Bow/src/graphics/CMultiImage.h \
+  /Users/larafs/Desktop/chai3d-3.2.0/src/graphics/CMultiImage.cpp \
+  /Users/larafs/Desktop/chai3d-3.2.0/src/graphics/CMultiImage.h \
   src/graphics/CImage.h src/graphics/CColor.h src/math/CMaths.h \
   src/math/CTransform.h src/math/CMatrix3d.h src/math/CConstants.h \
   src/system/CGlobals.h external/Eigen/Eigen/Eigen \

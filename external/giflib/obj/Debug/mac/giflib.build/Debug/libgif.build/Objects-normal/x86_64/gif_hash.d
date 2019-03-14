@@ -1,7 +1,7 @@
 dependencies: \
-  /Users/erinpwoo/Desktop/Rigged-Bow/external/giflib/src/gif_hash.c \
+  /Users/larafs/Desktop/chai3d-3.2.0/external/giflib/src/gif_hash.c \
   include/gif_config.h \
-  /Users/erinpwoo/Desktop/Rigged-Bow/external/giflib/include/gif_lib.h \
-  /Users/erinpwoo/Desktop/Rigged-Bow/external/giflib/include/gif_hash.h \
-  /Users/erinpwoo/Desktop/Rigged-Bow/external/giflib/include/gif_lib_private.h \
+  /Users/larafs/Desktop/chai3d-3.2.0/external/giflib/include/gif_lib.h \
+  /Users/larafs/Desktop/chai3d-3.2.0/external/giflib/include/gif_hash.h \
+  /Users/larafs/Desktop/chai3d-3.2.0/external/giflib/include/gif_lib_private.h \
   include/gif_lib.h include/gif_hash.h

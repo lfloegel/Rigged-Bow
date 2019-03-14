@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/erinpwoo/Desktop/Rigged-Bow/src/files/CFileImageBMP.cpp \
+  /Users/larafs/Desktop/chai3d-3.2.0/src/files/CFileImageBMP.cpp \
   src/files/CFileImageBMP.h src/graphics/CImage.h src/graphics/CColor.h \
   src/math/CMaths.h src/math/CTransform.h src/math/CMatrix3d.h \
   src/math/CConstants.h src/system/CGlobals.h external/Eigen/Eigen/Eigen \

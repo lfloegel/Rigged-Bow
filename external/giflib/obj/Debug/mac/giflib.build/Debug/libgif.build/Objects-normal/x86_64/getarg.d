@@ -1,4 +1,4 @@
 dependencies: \
-  /Users/erinpwoo/Desktop/Rigged-Bow/external/giflib/src/getarg.c \
+  /Users/larafs/Desktop/chai3d-3.2.0/external/giflib/src/getarg.c \
   include/gif_config.h \
-  /Users/erinpwoo/Desktop/Rigged-Bow/external/giflib/include/getarg.h
+  /Users/larafs/Desktop/chai3d-3.2.0/external/giflib/include/getarg.h

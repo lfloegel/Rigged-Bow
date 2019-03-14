@@ -100,7 +100,11 @@ cToolCursor* tool;
 cMesh* cylinder;
 //cMesh* cone;
 //cMultiSegment* segments;
-cMultiMesh* turntable;
+cMultiMesh* bow;
+cMultiMesh* pig;
+cMultiMesh* pig2;
+cMultiMesh* pig3;
+cMultiMesh* arrow;
 
 cShapeLine* top;
 
@@ -108,11 +112,15 @@ cShapeLine* bottom;
 // a colored background
 cBackground* background;
 
+// rendering option
+bool showTexture = true;
+
 // a font for rendering text
 cFontPtr font;
 
 // a label to display the rate [Hz] at which the simulation is running
-cLabel* labelRates;
+//cLabel* labelRates;
+cLabel* labelMessage;
 
 // a flag that indicates if the haptic simulation is currently running
 bool simulationRunning = false;
@@ -330,7 +338,7 @@ int main(int argc, char* argv[])
     light->m_shadowMap->setQualityMedium();
 
     // set light cone half angle
-    light->setCutOffAngleDeg(30);
+    light->setCutOffAngleDeg(90);
 
 
     //--------------------------------------------------------------------------
@@ -471,27 +479,27 @@ int main(int argc, char* argv[])
 */
 
     /////////////////////////////////////////////////////////////////////////
-    // CYLINDER
+    // BOW
     /////////////////////////////////////////////////////////////////////////
 
     // create a virtual mesh
-    turntable = new cMultiMesh();
+    bow = new cMultiMesh();
     
     // add object to world
-    world->addChild(turntable);
+    world->addChild(bow);
     
-    // set the position of turntable object at the center of the world
-    turntable->setLocalPos(0.0, 0.0, 0.0);
-    turntable->rotateAboutGlobalAxisDeg(cVector3d(1,0,0), 90);
-    turntable->rotateAboutGlobalAxisDeg(cVector3d(0,1,0), 180);
+    // set the position of bow object at the center of the world
+    bow->setLocalPos(0.0, 0.0, 0.0);
+    bow->rotateAboutGlobalAxisDeg(cVector3d(1,0,0), 90);
+    bow->rotateAboutGlobalAxisDeg(cVector3d(0,1,0), 180);
     
     // load an object file
     bool fileload;
-    fileload = turntable->loadFromFile(RESOURCE_PATH("../resources/models/turntable/bowrig2.obj"));
+    fileload = bow->loadFromFile(RESOURCE_PATH("../resources/models/turntable/bowa.obj"));
     if (!fileload)
     {
     #if defined(_MSVC)
-        fileload = turntable->loadFromFile("../../../bin/resources/models/turntable/bowrig2.obj");
+        fileload = bow->loadFromFile("../../../bin/resources/models/turntable/bowa.obj");
     #endif
     }
     if (!fileload)
@@ -502,23 +510,208 @@ int main(int argc, char* argv[])
     }
     
     // compute a boundary box
-    turntable->computeBoundaryBox(true);
+    bow->computeBoundaryBox(true);
     
     // get dimensions of object
-    double size = cSub(turntable->getBoundaryMax(), turntable->getBoundaryMin()).length();
+    double size = cSub(bow->getBoundaryMax(), bow->getBoundaryMin()).length();
     
     // resize object to screen
     if (size > 0)
     {
-        turntable->scale( 1.0 / size);
+        bow->scale( 1.0 / size);
     }
     
     // setup collision detection algorithm
-    turntable->createAABBCollisionDetector(toolRadius);
+    bow->createAABBCollisionDetector(toolRadius);
     
     // define a default stiffness for the object
-    turntable->setStiffness(0.8 * maxStiffness, true);
+    bow->setStiffness(0.8 * maxStiffness, true);
     
+    
+    /////////////////////////////////////////////////////////////////////////
+    // PIGS
+    /////////////////////////////////////////////////////////////////////////
+    
+    // create a virtual mesh
+    pig = new cMultiMesh();
+    
+    // add object to world
+    world->addChild(pig);
+    
+    // set the position of bow object at the center of the world
+    pig->setLocalPos(-3.0, -2.0, -3.0);
+    pig->rotateAboutGlobalAxisDeg(cVector3d(1,1,1.5), 90);
+    //pig->rotateAboutGlobalAxisDeg(cVector3d(0,0,0), 180);
+    
+    // load an object file
+    fileload = pig->loadFromFile(RESOURCE_PATH("../resources/models/turntable/pig.obj"));
+    if (!fileload)
+    {
+    #if defined(_MSVC)
+        fileload = pig->loadFromFile("../../../bin/resources/models/turntable/pig.obj");
+    #endif
+    }
+    if (!fileload)
+    {
+        printf("Error - 3D Model failed to load correctly.\n");
+        close();
+        return (-1);
+    }
+    
+    // compute a boundary box
+    pig->computeBoundaryBox(true);
+    
+    // get dimensions of object
+    double size2 = cSub(pig->getBoundaryMax(), pig->getBoundaryMin()).length();
+    
+    // resize object to screen
+    if (size2 > 0)
+    {
+        pig->scale( 1.0 / size2);
+    }
+    
+    // setup collision detection algorithm
+    pig->createAABBCollisionDetector(toolRadius);
+    
+    // define a default stiffness for the object
+    pig->setStiffness(0.8 * maxStiffness, true);
+    
+    // create a virtual mesh
+    pig2 = new cMultiMesh();
+    
+    // add object to world
+    world->addChild(pig2);
+    
+    // set the position of bow object at the center of the world
+    pig2->setLocalPos(-2.8, 2.7, -3.3);
+    pig2->rotateAboutGlobalAxisDeg(cVector3d(1,0,0), 90);
+    //pig->rotateAboutGlobalAxisDeg(cVector3d(0,0,0), 180);
+    
+    // load an object file
+    fileload = pig2->loadFromFile(RESOURCE_PATH("../resources/models/turntable/pig.obj"));
+    if (!fileload)
+    {
+    #if defined(_MSVC)
+        fileload = pig2->loadFromFile("../../../bin/resources/models/turntable/pig.obj");
+    #endif
+    }
+    if (!fileload)
+    {
+        printf("Error - 3D Model failed to load correctly.\n");
+        close();
+        return (-1);
+    }
+    
+    // compute a boundary box
+    pig2->computeBoundaryBox(true);
+    
+    // get dimensions of object
+    double size3 = cSub(pig2->getBoundaryMax(), pig2->getBoundaryMin()).length();
+    
+    // resize object to screen
+    if (size3 > 0)
+    {
+        pig2->scale( 1.0 / size3);
+    }
+    
+    // setup collision detection algorithm
+    pig2->createAABBCollisionDetector(toolRadius);
+    
+    // define a default stiffness for the object
+    pig2->setStiffness(0.8 * maxStiffness, true);
+    
+    // create a virtual mesh
+    pig3 = new cMultiMesh();
+    
+    // add object to world
+    world->addChild(pig3);
+    
+    // set the position of bow object at the center of the world
+    pig3->setLocalPos(-2.0, 1.0, -3.3);
+    pig3->rotateAboutGlobalAxisDeg(cVector3d(1,0,1), 90);
+    //pig->rotateAboutGlobalAxisDeg(cVector3d(0,0,0), 180);
+    
+    // load an object file
+    fileload = pig3->loadFromFile(RESOURCE_PATH("../resources/models/turntable/pig.obj"));
+    if (!fileload)
+    {
+    #if defined(_MSVC)
+        fileload = pig3->loadFromFile("../../../bin/resources/models/turntable/pig.obj");
+    #endif
+    }
+    if (!fileload)
+    {
+        printf("Error - 3D Model failed to load correctly.\n");
+        close();
+        return (-1);
+    }
+    
+    // compute a boundary box
+    pig3->computeBoundaryBox(true);
+    
+    // get dimensions of object
+    size3 = cSub(pig3->getBoundaryMax(), pig3->getBoundaryMin()).length();
+    
+    // resize object to screen
+    if (size3 > 0)
+    {
+        pig3->scale( 1.5 / size3);
+    }
+    
+    // setup collision detection algorithm
+    pig3->createAABBCollisionDetector(toolRadius);
+
+    pig3->setStiffness(0.8 * maxStiffness, true);
+    
+    /////////////////////////////////////////////////////////////////////////
+    // ARROW
+    /////////////////////////////////////////////////////////////////////////
+    
+    // create a virtual mesh
+    arrow = new cMultiMesh();
+    
+    // add object to world
+    world->addChild(arrow);
+    
+    // set the position of bow object at the center of the world
+    arrow->setLocalPos(3.0, 0.5, 0.0);
+    arrow->rotateAboutGlobalAxisDeg(cVector3d(0,0,0), 90);
+    //pig->rotateAboutGlobalAxisDeg(cVector3d(0,0,0), 180);
+    
+    // load an object file
+    fileload = arrow->loadFromFile(RESOURCE_PATH("../resources/models/turntable/arrow.obj"));
+    if (!fileload)
+    {
+    #if defined(_MSVC)
+        fileload = arrow->loadFromFile("../../../bin/resources/models/turntable/arrow.obj");
+    #endif
+    }
+    if (!fileload)
+    {
+        printf("Error - 3D Model failed to load correctly.\n");
+        close();
+        return (-1);
+    }
+    
+    // compute a boundary box
+    arrow->computeBoundaryBox(true);
+    
+    // get dimensions of object
+    size3 = cSub(arrow->getBoundaryMax(), arrow->getBoundaryMin()).length();
+    
+    // resize object to screen
+    if (size3 > 0)
+    {
+        arrow->scale( 1.0 / size3);
+    }
+    
+    // setup collision detection algorithm
+    arrow->createAABBCollisionDetector(toolRadius);
+    
+    arrow->setStiffness(0.8 * maxStiffness, true);
+    
+    
+/*
     // create a mesh
     cMesh*  cylinder = new cMesh();
 
@@ -526,18 +719,18 @@ int main(int argc, char* argv[])
     world->addChild(cylinder);
     
     // build mesh using a cylinder primitive
-//    cCreatePipe(cylinder,
-//                0.80,
-//                0.001,
-//                0.001,
-//                32,
-//                1,
-//                cVector3d(-0.05,-0.20, 0.0),
-//                cMatrix3d(cDegToRad(0), cDegToRad(0), cDegToRad(170), C_EULER_ORDER_XYZ)
-//                );
+    cCreatePipe(cylinder,
+               0.1,
+                0.001,
+                0.1,
+                32,
+                1,
+                cVector3d(-0.05,-0.20, 0.0),
+                cMatrix3d(cDegToRad(0), cDegToRad(0), cDegToRad(170), C_EULER_ORDER_XYZ)
+                );
 
     // set material properties
-    cylinder->m_material->setBlueCornflower();
+    //cylinder->m_material->setRedDark();
     cylinder->m_material->setStiffness(0.5 * maxStiffness);
 
     // build collision detection tree
@@ -545,7 +738,7 @@ int main(int argc, char* argv[])
 
     // use display list to optimize graphic rendering performance
     cylinder->setUseDisplayList(true);
-
+*/
 /*
     /////////////////////////////////////////////////////////////////////////
     // CONE
@@ -654,8 +847,12 @@ int main(int argc, char* argv[])
     // assign shader to mesh objects in the world
     tool->setShaderProgram(shaderProgram);
     world->setShaderProgram(shaderProgram);
-    //teaPot->setShaderProgram(shaderProgram);
-    cylinder->setShaderProgram(shaderProgram);
+    bow->setShaderProgram(shaderProgram);
+    pig->setShaderProgram(shaderProgram);
+    pig2->setShaderProgram(shaderProgram);
+    pig3->setShaderProgram(shaderProgram);
+    arrow->setShaderProgram(shaderProgram);
+    //cylinder->setShaderProgram(shaderProgram);
     //cone->setShaderProgram(shaderProgram);
 
 
@@ -666,20 +863,43 @@ int main(int argc, char* argv[])
     // create a font
     font = NEW_CFONTCALIBRI20();
     
+    /*
     // create a label to display the haptic and graphic rate of the simulation
     labelRates = new cLabel(font);
     labelRates->m_fontColor.setBlack();
     camera->m_frontLayer->addChild(labelRates);
+     */
+    
+    // create a small message
+    labelMessage = new cLabel(font);
+    labelMessage->m_fontColor.setBlack();
+    labelMessage->setText("SCORE: 0");
+    labelMessage->setFontScale(1.3);
+    camera->m_frontLayer->addChild(labelMessage);
 
     // create a background
-    background = new cBackground();
+    cBackground* background = new cBackground();
     camera->m_backLayer->addChild(background);
-
-    // set background properties
-    background->setCornerColors(cColorf(1.0f, 1.0f, 1.0f),
-                                cColorf(1.0f, 1.0f, 1.0f),
-                                cColorf(0.8f, 0.8f, 0.8f),
-                                cColorf(0.8f, 0.8f, 0.8f));
+    
+    // set aspect ration of background image a constant
+    background->setFixedAspectRatio(true);
+    
+    // load an object file
+    bool fileload2;
+    
+    fileload2 = background->loadFromFile(RESOURCE_PATH("../resources/images/grass.jpg"));
+    if (!fileload2)
+    {
+    #if defined(_MSVC)
+        fileload2 = background->loadFromFile("../../../bin/resources/images/grass.jpg");
+    #endif
+    }
+    if (!fileload2)
+    {
+        cout << "Error - Image failed to load correctly." << endl;
+        close();
+        return (-1);
+    }
 
 
     //--------------------------------------------------------------------------
@@ -767,6 +987,13 @@ void keyCallback(GLFWwindow* a_window, int a_key, int a_scancode, int a_action, 
     {
         glfwSetWindowShouldClose(a_window, GLFW_TRUE);
     }
+    
+    // option - show/hide texture
+    if (a_key == GLFW_KEY_1)
+    {
+        showTexture = !showTexture;
+        pig3->setUseTexture(showTexture);
+    }
 
     // option - save shadow map to file
     else if (a_key == GLFW_KEY_S)
@@ -841,12 +1068,14 @@ void updateGraphics(void)
     // UPDATE WIDGETS
     /////////////////////////////////////////////////////////////////////
 
+    /*
     // update haptic and graphic rate data
     labelRates->setText(cStr(freqCounterGraphics.getFrequency(), 0) + " Hz / " +
                         cStr(freqCounterHaptics.getFrequency(), 0) + " Hz");
+    */
 
     // update position of label
-    labelRates->setLocalPos((int)(0.5 * (width - labelRates->getWidth())), 15);
+    labelMessage->setLocalPos(5, (int)(0.63 * (width - labelMessage->getWidth())));
 
 
     /////////////////////////////////////////////////////////////////////
@@ -971,6 +1200,49 @@ void updateHaptics(void)
             
             top->m_pointB = parent_T_object.getLocalPos();
             bottom->m_pointA = parent_T_object.getLocalPos();
+            
+            /*
+            // create a virtual mesh
+            pig4 = new cMultiMesh();
+            
+            // add object to world
+            world->addChild(pig4);
+            
+            // set the position of bow object at the center of the world
+            pig4->setLocalPos(0.0, 0.0, 0.0);
+            pig4->rotateAboutGlobalAxisDeg(cVector3d(1,0,1), 90);
+            //pig->rotateAboutGlobalAxisDeg(cVector3d(0,0,0), 180);
+            
+            bool fileload;
+            // load an object file
+            fileload = pig4->loadFromFile(RESOURCE_PATH("../resources/models/turntable/pig.obj"));
+            if (!fileload)
+            {
+            #if defined(_MSVC)
+                fileload = pig4->loadFromFile("../../../bin/resources/models/turntable/pig.obj");
+            #endif
+            }
+            
+            // compute a boundary box
+            pig4->computeBoundaryBox(true);
+            
+            // get dimensions of object
+            double size3 = cSub(pig4->getBoundaryMax(), pig4->getBoundaryMin()).length();
+            
+            // resize object to screen
+            if (size3 > 0)
+            {
+                pig4->scale( 1.5 / size3);
+            }
+            
+            // setup collision detection algorithm
+            //pig4->createAABBCollisionDetector(toolRadius);
+            
+            pig4->setStiffness(10, true);
+             */
+            
+            //arrow->setLocalPos(0.0, 0.0, 0.0);
+            arrow->setLocalPos(0.0, 0.5, 0.0);
         }
 
         //
@@ -982,6 +1254,8 @@ void updateHaptics(void)
             state = IDLE;
             top->m_pointB = cVector3d(0,0,0);
             bottom->m_pointA = cVector3d(0,0,0);
+            //pig3->setLocalPos(-2.0, 1.0, -3.3);
+            arrow->setLocalPos(3.0, 0.5, 0.0);
         }
 
 

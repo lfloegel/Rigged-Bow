@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/erinpwoo/Desktop/Rigged-Bow/src/world/CShapeCylinder.cpp \
+  /Users/larafs/Desktop/chai3d-3.2.0/src/world/CShapeCylinder.cpp \
   src/world/CShapeCylinder.h src/world/CGenericObject.h \
   src/collisions/CCollisionBasics.h src/math/CVector3d.h \
   src/system/CString.h src/system/CGlobals.h src/math/CConstants.h \

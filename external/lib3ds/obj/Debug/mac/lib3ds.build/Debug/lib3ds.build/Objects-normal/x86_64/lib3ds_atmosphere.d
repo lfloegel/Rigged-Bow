@@ -1,4 +1,4 @@
 dependencies: \
-  /Users/erinpwoo/Desktop/Rigged-Bow/external/lib3ds/src/lib3ds_atmosphere.c \
-  /Users/erinpwoo/Desktop/Rigged-Bow/external/lib3ds/include/lib3ds_impl.h \
+  /Users/larafs/Desktop/chai3d-3.2.0/external/lib3ds/src/lib3ds_atmosphere.c \
+  /Users/larafs/Desktop/chai3d-3.2.0/external/lib3ds/include/lib3ds_impl.h \
   include/lib3ds.h

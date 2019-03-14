@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/erinpwoo/Desktop/Rigged-Bow/src/lighting/CSpotLight.cpp \
+  /Users/larafs/Desktop/chai3d-3.2.0/src/lighting/CSpotLight.cpp \
   src/lighting/CSpotLight.h src/lighting/CPositionalLight.h \
   src/lighting/CGenericLight.h src/graphics/CColor.h src/math/CMaths.h \
   src/math/CTransform.h src/math/CMatrix3d.h src/math/CConstants.h \

@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/erinpwoo/Desktop/Rigged-Bow/src/widgets/CGenericWidget.cpp \
+  /Users/larafs/Desktop/chai3d-3.2.0/src/widgets/CGenericWidget.cpp \
   src/widgets/CGenericWidget.h src/world/CMesh.h \
   src/world/CGenericObject.h src/collisions/CCollisionBasics.h \
   src/math/CVector3d.h src/system/CString.h src/system/CGlobals.h \
