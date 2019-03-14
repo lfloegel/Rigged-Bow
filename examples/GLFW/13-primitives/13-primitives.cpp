@@ -277,7 +277,7 @@ int main(int argc, char* argv[])
     world = new cWorld();
 
     // set the background color of the environment
-    world->m_backgroundColor.setBlack();
+    world->m_backgroundColor.setWhite();
 
     // create a camera and insert it into the virtual world
     camera = new cCamera(world);
@@ -361,12 +361,14 @@ int main(int argc, char* argv[])
     tool->setRadius(toolRadius);
 
     // hide the device sphere. only show proxy.
+    //makes the poxy sphere and connects them with a line
     tool->setShowContactPoints(true, false);
 
     // enable if objects in the scene are going to rotate of translate
     // or possibly collide against the tool. If the environment
     // is entirely static, you can set this parameter to "false"
     tool->enableDynamicObjects(true);
+    tool->setWorkspaceRadius(1.0);
 
     // haptic forces are enabled only if small forces are first sent to the device;
     // this mode avoids the force spike that occurs when the application starts when 
@@ -511,8 +513,8 @@ int main(int argc, char* argv[])
 
     // build mesh using a cylinder primitive
     cCreatePipe(cylinder, 
-                0.80,
-                0.001,
+                0.1,
+                0.1,
                 0.001,
                 32,
                 1,
@@ -529,7 +531,6 @@ int main(int argc, char* argv[])
 
     // use display list to optimize graphic rendering performance
     cylinder->setUseDisplayList(true);
-
 /*
     /////////////////////////////////////////////////////////////////////////
     // CONE
@@ -638,8 +639,9 @@ int main(int argc, char* argv[])
     // assign shader to mesh objects in the world
     tool->setShaderProgram(shaderProgram);
     world->setShaderProgram(shaderProgram);
+    turntable->setShaderProgram(shaderProgram);
     //teaPot->setShaderProgram(shaderProgram);
-    cylinder->setShaderProgram(shaderProgram);
+    //cylinder->setShaderProgram(shaderProgram);
     //cone->setShaderProgram(shaderProgram);
 
 
@@ -656,14 +658,36 @@ int main(int argc, char* argv[])
     camera->m_frontLayer->addChild(labelRates);
 
     // create a background
-    background = new cBackground();
+    cBackground* background = new cBackground();
     camera->m_backLayer->addChild(background);
+    
+    // set aspect ration of background image a constant
+    background->setFixedAspectRatio(true);
+    
+    // load an object file
+    bool fileload2;
+    
+    fileload2 = background->loadFromFile(RESOURCE_PATH("../resources/images/glass3.jpg"));
+    if (!fileload2)
+    {
+    #if defined(_MSVC)
+        fileload2 = background->loadFromFile("../../../bin/resources/images/glass3.jpg");
+    #endif
+    }
+    if (!fileload2)
+    {
+        cout << "Error - Image failed to load correctly." << endl;
+        close();
+        return (-1);
+    }
 
     // set background properties
+    /*
     background->setCornerColors(cColorf(1.0f, 1.0f, 1.0f),
                                 cColorf(1.0f, 1.0f, 1.0f),
                                 cColorf(0.8f, 0.8f, 0.8f),
                                 cColorf(0.8f, 0.8f, 0.8f));
+     */
 
 
     //--------------------------------------------------------------------------
@@ -902,6 +926,7 @@ void updateHaptics(void)
             // check if at least one contact has occurred
             if (tool->m_hapticPoint->getNumCollisionEvents() > 0)
             {
+                
                 // get contact event
                 cCollisionEvent* collisionEvent = tool->m_hapticPoint->getCollisionEvent(0);
 
@@ -917,18 +942,20 @@ void updateHaptics(void)
 
                 // store current transformation tool
                 tool_T_object = tool_T_world * world_T_object;
-
+                
                 // update state
                 state = SELECTION;
             }
         }
 
+
         //
         // STATE 2:
         // Selection mode - operator maintains user switch enabled and moves object
         //
-        else if ((state == SELECTION) && (button == true))
+        if ((state == SELECTION) && (button == true))
         {
+            
             // compute new tranformation of object in global coordinates
             cTransform world_T_object = world_T_tool * tool_T_object;
 
@@ -941,7 +968,7 @@ void updateHaptics(void)
             object->setLocalTransform(parent_T_object);
 
             // set zero forces when manipulating objects
-            tool->setDeviceGlobalForce(0.0, 0.0, 0.0);
+            //tool->setDeviceGlobalForce(0.0, 0.0, 0.0);
         }
 
         //

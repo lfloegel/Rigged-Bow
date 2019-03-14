@@ -507,8 +507,8 @@ int main(int argc, char* argv[])
     camera->m_backLayer->addChild(background);
 
     // set background properties
-    background->setCornerColors(cColorf(1.0f, 1.0f, 1.0f),
-                                cColorf(1.0f, 1.0f, 1.0f),
+    background->setCornerColors(cColorf(0.3f, 1.0f, 1.0f),
+                                cColorf(1.0f, 0.3f, 1.0f),
                                 cColorf(0.8f, 0.8f, 0.8f),
                                 cColorf(0.8f, 0.8f, 0.8f));
 
