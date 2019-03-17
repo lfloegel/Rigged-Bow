@@ -80,6 +80,8 @@ cWorld* world;
 // a camera to render the world in the window display
 cCamera* camera;
 
+cShapeSphere* b1;
+cShapeSphere* b2;
 // a light source to illuminate the objects in the world
 cDirectionalLight *light;
 
@@ -102,9 +104,6 @@ cMultiMesh* arrow;
 cMultiMesh* object;
 
 cShapeLine* top;
-
-double displacement;
-cVector3d init_pos;
 
 cShapeLine* bottom;
 
@@ -147,8 +146,6 @@ bool useForceField = true;
 
 // current width of window
 int width = 0;
-
-bool isPull = false;
 
 // current height of window
 int height = 0;
@@ -365,7 +362,11 @@ int main(int argc, char* argv[])
     bottom = new cShapeLine(cVector3d(0.0, 0.0, 0.0), cVector3d(.2,0,-.4));
     world -> addChild(bottom);
     //adding bow string points
-
+    b1 = new cShapeSphere(.01);
+    b2 = new cShapeSphere(.01);
+    world->addChild(b1);
+    b1->setLocalPos(.2,0,.4);
+    b2->setLocalPos(.2,0,-.4);
     // connect the haptic device to the tool
     tool->setHapticDevice(hapticDevice);
 
@@ -821,38 +822,37 @@ enum cMode
 
 void updateHaptics(void)
 {
+    double displacement;
+    cVector3d init_pos;
     cMode state = IDLE;
     cGenericObject* object = NULL;
     cTransform tool_T_object;
-    
+
     // simulation in now running
     simulationRunning  = true;
     simulationFinished = false;
-    
+
     // main haptic simulation loop
     while(simulationRunning)
     {
         /////////////////////////////////////////////////////////////////////////
         // HAPTIC RENDERING
         /////////////////////////////////////////////////////////////////////////
-        
-        // signal frequency counter
-        freqCounterHaptics.signal(1);
-        
+
         // compute global reference frames for each object
         world->computeGlobalPositions(true);
-        
+
         // update position and orientation of tool
         tool->updateFromDevice();
-        
+
         // compute interaction forces
         tool->computeInteractionForces();
-        
+
         
         // read position
         cVector3d position;
         hapticDevice->getPosition(position);
-        
+ 
         cMatrix3d rotation;
         hapticDevice->getRotation(rotation);
         
@@ -872,24 +872,16 @@ void updateHaptics(void)
         double gripperAngularVelocity;
         hapticDevice->getGripperAngularVelocity(gripperAngularVelocity);
         
-        // desired position
-        cVector3d desiredPosition;  //set desired position to position detected by device
-        desiredPosition = position;
-        
-        // desired orientation
-        cMatrix3d desiredRotation;
-        desiredRotation.identity();
-        
         /////////////////////////////////////////////////////////////////////////
         // HAPTIC MANIPULATION
         /////////////////////////////////////////////////////////////////////////
-        
+
         // compute transformation from world to tool (haptic device)
         cTransform world_T_tool = tool->getDeviceGlobalTransform();
-        
+
         // get status of user switch
         bool button = tool->getUserSwitch(0);
-        
+
         //
         // STATE 1:
         // Idle mode - user presses the user switch
@@ -899,99 +891,164 @@ void updateHaptics(void)
             // check if at least one contact has occurred
             if (tool->m_hapticPoint->getNumCollisionEvents() > 0)
             {
-                isPull = true;
-                hapticDevice -> getPosition(init_pos); //sets initial position to where they first press button
                 
+                displacement = 0.0;
+                hapticDevice -> getPosition(init_pos);
                 // get contact event
                 cCollisionEvent* collisionEvent = tool->m_hapticPoint->getCollisionEvent(0);
-                
+
                 // get object from contact event
                 object = collisionEvent->m_object;
-                
+
                 // get transformation from object
                 cTransform world_T_object = object->getGlobalTransform();
-                
-                // compute inverse transformation from contact point to object
+
+                // compute inverse transformation from contact point to object 
                 cTransform tool_T_world = world_T_tool;
                 tool_T_world.invert();
-                
+
                 // store current transformation tool
                 tool_T_object = tool_T_world * world_T_object;
-                
+
                 // update state
                 state = SELECTION;
             }
         }
-        
+
         //
         // STATE 2:
         // Selection mode - operator maintains user switch enabled and moves object
         //
         else if ((state == SELECTION) && (button == true))
         {
-            //compute new tranformation of object in global coordinates
+             //compute new tranformation of object in global coordinates
             cTransform world_T_object = world_T_tool * tool_T_object;
-            
+
             // compute new tranformation of object in local coordinates
             cTransform parent_T_world = object->getParent()->getLocalTransform();
             parent_T_world.invert();
             cTransform parent_T_object = parent_T_world * world_T_object;
+
+            // assign new local transformation to object
+            //object->setLocalTransform(parent_T_object);
+//
+//            // set zero forces when manipulating objects
+//            tool->setDeviceGlobalForce(0.0, 0.0, 0.0);
+            
+            /////////////////////////////////////////////////////////////////////
+            // COMPUTE AND APPLY FORCES
+            /////////////////////////////////////////////////////////////////////
+            
+            // desired position
+            cVector3d desiredPosition;  //set desired position to position detected by device
+            desiredPosition = position;
+            
+            // desired orientation
+            cMatrix3d desiredRotation;
+            desiredRotation.identity();
+            
             
             cVector3d position;
             hapticDevice->getPosition(position);
             
-            displacement = position.distance(init_pos); //recalculating displacement for string force
+            displacement = position.distance(init_pos);
             
             top->m_pointB = parent_T_object.getLocalPos();
             bottom->m_pointA = parent_T_object.getLocalPos();
             
+            // variables for forces
+            cVector3d force (0,0,0);
+            cVector3d torque (0,0,0);
+            double gripperForce = 0.0;
+            
+            // apply force field
+            if (useForceField)
+            {
+                // compute linear force
+                //ADJUSTING KP: AFFECTS STIFFNESS OF DEVICE AND HOW IT'S RESISTANCE TO BEING MOVED FROM ITS ORIGINAL POSITION (0,0,0)
+                
+                //VIRTUAL WALL ALGORITHM:
+                /*
+                 double Kp; // [N/m]
+                 cVector3d forceField;
+                 if (position.y() < 0) { //y is the horizontal "x" axis
+                 Kp = -500;
+                 } else {
+                 Kp = 0;
+                 }
+                 forceField = Kp * (position);
+                 //forceField = 0;
+                 
+                 force.add(forceField);
+                */
+                useForceField = true;
+                //Virtual walls for pong game:
+                double Kp = -150; //[N/m]
+                cVector3d forceField;
+                
+                forceField = (Kp * displacement*1000) * position;
+                cout << displacement << endl;
+                force.add(forceField);
+                
+                // compute angular torque
+                double Kr = 0.05; // [N/m.rad]
+                cVector3d axis;
+                double angle;
+                cMatrix3d deltaRotation = cTranspose(rotation) * desiredRotation;
+                deltaRotation.toAxisAngle(axis, angle);
+                torque = rotation * ((Kr * angle) * axis);
+                
+            }
+            
+            
+            // apply damping term
+            if (useDamping)
+            {
+                //DAMPING:defined as the ability to resist oscillations.
+                cHapticDeviceInfo info = hapticDevice->getSpecifications();
+                
+                // compute linear damping force
+                double Kv = .3 * info.m_maxLinearDamping;
+                cVector3d forceDamping = -Kv * linearVelocity;
+                force.add(forceDamping);
+                
+                // compute angular damping force
+                double Kvr = 1.0 * info.m_maxAngularDamping;
+                cVector3d torqueDamping = -Kvr * angularVelocity;
+                torque.add(torqueDamping);
+                
+                // compute gripper angular damping force
+                double Kvg = 1.0 * info.m_maxGripperAngularDamping;
+                gripperForce = gripperForce - Kvg * gripperAngularVelocity;
+            }
+            
+            // send computed force, torque, and gripper force to haptic device
+            hapticDevice->setForceAndTorqueAndGripperForce(force, torque, gripperForce);
+            
+
+            // send forces to haptic device
+            tool->applyToDevice();
+            // signal frequency counter
+            freqCounterHaptics.signal(1);
+            
+            hapticDevice->setForceAndTorqueAndGripperForce(force, torque, gripperForce);
+            
+            //arrow stuff
             arrow->setLocalPos(0.0, 0.5, 0.0);
         }
-        
+
         //
         // STATE 3:
         // Finalize Selection mode - operator releases user switch.
         //
         else
         {
-            
-            isPull = false;
-            displacement = 0.0;
             state = IDLE;
             top->m_pointB = cVector3d(0,0,0);
             bottom->m_pointA = cVector3d(0,0,0);
             //pig3->setLocalPos(-2.0, 1.0, -3.3);
             arrow->setLocalPos(3.0, 0.5, 0.0);
         }
-        
-        cVector3d force (0,0,0);
-        cVector3d torque (0,0,0);
-        double gripperForce = 0.0;
-        
-        if (isPull) {
-            double Kp = -150; //[N/m]
-            cVector3d forceField;
-            
-            forceField = (Kp * displacement*1000) * position;
-            cout << displacement << endl;
-            force.add(forceField);
-            
-            // compute angular torque
-            double Kr = 0.05; // [N/m.rad]
-            cVector3d axis;
-            double angle;
-            cMatrix3d deltaRotation = cTranspose(rotation) * desiredRotation;
-            deltaRotation.toAxisAngle(axis, angle);
-            torque = rotation * ((Kr * angle) * axis);
-            hapticDevice->setForceAndTorqueAndGripperForce(force, torque, gripperForce);
-        }
-        
-        /////////////////////////////////////////////////////////////////////////
-        // FINALIZE
-        /////////////////////////////////////////////////////////////////////////
-        
-        // send forces to haptic device
-        tool->applyToDevice();
     }
     
     // exit haptics thread
