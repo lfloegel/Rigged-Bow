@@ -1,4 +1,4 @@
-dependencies: /Users/larafs/Desktop/chai3d-3.2.0-A/src/graphics/CFog.cpp \
+dependencies: /Users/erinpwoo/Desktop/Rigged-Bow/src/graphics/CFog.cpp \
   src/graphics/CFog.h src/graphics/CColor.h src/math/CMaths.h \
   src/math/CTransform.h src/math/CMatrix3d.h src/math/CConstants.h \
   src/system/CGlobals.h external/Eigen/Eigen/Eigen \

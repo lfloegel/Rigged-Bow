@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/larafs/Desktop/chai3d-3.2.0-A/examples/GLFW/13-primitives/13-primitives.cpp \
+  /Users/erinpwoo/Desktop/Rigged-Bow/examples/GLFW/13-primitives/13-primitives.cpp \
   src/chai3d.h src/audio/CAudioBuffer.h src/math/CMaths.h \
   src/math/CTransform.h src/math/CMatrix3d.h src/math/CConstants.h \
   src/system/CGlobals.h external/Eigen/Eigen/Eigen \

@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/larafs/Desktop/chai3d-3.2.0-A/src/files/CFileModel3DS.cpp \
+  /Users/erinpwoo/Desktop/Rigged-Bow/src/files/CFileModel3DS.cpp \
   src/files/CFileModel3DS.h src/world/CMultiMesh.h src/world/CMesh.h \
   src/world/CGenericObject.h src/collisions/CCollisionBasics.h \
   src/math/CVector3d.h src/system/CString.h src/system/CGlobals.h \

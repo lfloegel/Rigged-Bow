@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/larafs/Desktop/chai3d-3.2.0-A/src/forces/CAlgorithmPotentialField.cpp \
+  /Users/erinpwoo/Desktop/Rigged-Bow/src/forces/CAlgorithmPotentialField.cpp \
   src/forces/CAlgorithmPotentialField.h \
   src/forces/CGenericForceAlgorithm.h src/math/CVector3d.h \
   src/system/CString.h src/system/CGlobals.h src/math/CConstants.h \

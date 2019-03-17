@@ -1,4 +1,4 @@
 dependencies: \
-  /Users/larafs/Desktop/chai3d-3.2.0-A/external/giflib/src/gif_font.c \
+  /Users/erinpwoo/Desktop/Rigged-Bow/external/giflib/src/gif_font.c \
   include/gif_config.h \
-  /Users/larafs/Desktop/chai3d-3.2.0-A/external/giflib/include/gif_lib.h
+  /Users/erinpwoo/Desktop/Rigged-Bow/external/giflib/include/gif_lib.h

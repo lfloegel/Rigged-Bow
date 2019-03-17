@@ -1,4 +1,4 @@
 dependencies: \
-  /Users/larafs/Desktop/chai3d-3.2.0-A/external/libpng/src/gzwrite.c \
-  /Users/larafs/Desktop/chai3d-3.2.0-A/external/libpng/include/gzguts.h \
+  /Users/erinpwoo/Desktop/Rigged-Bow/external/libpng/src/gzwrite.c \
+  /Users/erinpwoo/Desktop/Rigged-Bow/external/libpng/include/gzguts.h \
   include/zlib.h include/zconf.h

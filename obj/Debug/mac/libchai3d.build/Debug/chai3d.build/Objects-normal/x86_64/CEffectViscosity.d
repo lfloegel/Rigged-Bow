@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/larafs/Desktop/chai3d-3.2.0-A/src/effects/CEffectViscosity.cpp \
+  /Users/erinpwoo/Desktop/Rigged-Bow/src/effects/CEffectViscosity.cpp \
   src/effects/CEffectViscosity.h src/effects/CGenericEffect.h \
   src/math/CVector3d.h src/system/CString.h src/system/CGlobals.h \
   src/math/CConstants.h external/Eigen/Eigen/Eigen \

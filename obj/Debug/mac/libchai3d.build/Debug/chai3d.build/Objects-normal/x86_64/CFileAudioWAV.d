@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/larafs/Desktop/chai3d-3.2.0-A/src/files/CFileAudioWAV.cpp \
+  /Users/erinpwoo/Desktop/Rigged-Bow/src/files/CFileAudioWAV.cpp \
   src/files/CFileAudioWAV.h src/math/CConstants.h src/system/CGlobals.h \
   external/Eigen/Eigen/Eigen external/Eigen/Eigen/Dense \
   external/Eigen/Eigen/Core \

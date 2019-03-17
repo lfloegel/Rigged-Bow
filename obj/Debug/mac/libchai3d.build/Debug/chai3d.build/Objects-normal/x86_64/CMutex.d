@@ -1,2 +1,2 @@
-dependencies: /Users/larafs/Desktop/chai3d-3.2.0-A/src/system/CMutex.cpp \
+dependencies: /Users/erinpwoo/Desktop/Rigged-Bow/src/system/CMutex.cpp \
   src/system/CMutex.h src/system/CGlobals.h

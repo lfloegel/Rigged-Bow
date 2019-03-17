@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/larafs/Desktop/chai3d-3.2.0-A/src/devices/CGenericDevice.cpp \
+  /Users/erinpwoo/Desktop/Rigged-Bow/src/devices/CGenericDevice.cpp \
   src/devices/CGenericDevice.h src/math/CConstants.h \
   src/system/CGlobals.h external/Eigen/Eigen/Eigen \
   external/Eigen/Eigen/Dense external/Eigen/Eigen/Core \

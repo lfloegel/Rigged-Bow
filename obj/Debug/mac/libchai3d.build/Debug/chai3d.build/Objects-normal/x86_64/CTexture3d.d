@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/larafs/Desktop/chai3d-3.2.0-A/src/materials/CTexture3d.cpp \
+  /Users/erinpwoo/Desktop/Rigged-Bow/src/materials/CTexture3d.cpp \
   src/materials/CTexture3d.h src/graphics/CMultiImage.h \
   src/graphics/CImage.h src/graphics/CColor.h src/math/CMaths.h \
   src/math/CTransform.h src/math/CMatrix3d.h src/math/CConstants.h \

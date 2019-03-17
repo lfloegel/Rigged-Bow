@@ -138,6 +138,12 @@ cThread* hapticsThread;
 // a handle to window display context
 GLFWwindow* window = NULL;
 
+// a flag for using damping (ON/OFF)
+bool useDamping = true;
+
+// a flag for using force field (ON/OFF)
+bool useForceField = true;
+
 // current width of window
 int width = 0;
 
@@ -816,6 +822,8 @@ enum cMode
 
 void updateHaptics(void)
 {
+    double displacement;
+    cVector3d init_pos;
     cMode state = IDLE;
     cGenericObject* object = NULL;
     cTransform tool_T_object;
@@ -844,6 +852,25 @@ void updateHaptics(void)
         tool->computeInteractionForces();
 
  
+        cMatrix3d rotation;
+        hapticDevice->getRotation(rotation);
+        
+        // read gripper position
+        double gripperAngle;
+        hapticDevice->getGripperAngleRad(gripperAngle);
+        
+        // read linear velocity
+        cVector3d linearVelocity;
+        hapticDevice->getLinearVelocity(linearVelocity);
+        
+        // read angular velocity
+        cVector3d angularVelocity;
+        hapticDevice->getAngularVelocity(angularVelocity);
+        
+        // read gripper angular velocity
+        double gripperAngularVelocity;
+        hapticDevice->getGripperAngularVelocity(gripperAngularVelocity);
+        
         /////////////////////////////////////////////////////////////////////////
         // HAPTIC MANIPULATION
         /////////////////////////////////////////////////////////////////////////
@@ -864,6 +891,8 @@ void updateHaptics(void)
             if (tool->m_hapticPoint->getNumCollisionEvents() > 0)
             {
                 
+                displacement = 0.0;
+                hapticDevice -> getPosition(init_pos);
                 // get contact event
                 cCollisionEvent* collisionEvent = tool->m_hapticPoint->getCollisionEvent(0);
 
@@ -908,50 +937,86 @@ void updateHaptics(void)
             cVector3d position;
             hapticDevice->getPosition(position);
             
+            displacement = position.distance(init_pos);
+            
             top->m_pointB = parent_T_object.getLocalPos();
             bottom->m_pointA = parent_T_object.getLocalPos();
             
-            /*
-            // create a virtual mesh
-            pig4 = new cMultiMesh();
+            cVector3d force (0,0,0);
+            cVector3d torque (0,0,0);
+            double gripperForce = 0.0;
             
-            // add object to world
-            world->addChild(pig4);
-            
-            // set the position of bow object at the center of the world
-            pig4->setLocalPos(0.0, 0.0, 0.0);
-            pig4->rotateAboutGlobalAxisDeg(cVector3d(1,0,1), 90);
-            //pig->rotateAboutGlobalAxisDeg(cVector3d(0,0,0), 180);
-            
-            bool fileload;
-            // load an object file
-            fileload = pig4->loadFromFile(RESOURCE_PATH("../resources/models/turntable/pig.obj"));
-            if (!fileload)
+            if (useForceField)
             {
-            #if defined(_MSVC)
-                fileload = pig4->loadFromFile("../../../bin/resources/models/turntable/pig.obj");
-            #endif
+                // compute linear force
+                //ADJUSTING KP: AFFECTS STIFFNESS OF DEVICE AND HOW IT'S RESISTANCE TO BEING MOVED FROM ITS ORIGINAL POSITION (0,0,0)
+                
+                //VIRTUAL WALL ALGORITHM:
+                /*
+                 double Kp; // [N/m]
+                 cVector3d forceField;
+                 if (position.y() < 0) { //y is the horizontal "x" axis
+                 Kp = -500;
+                 } else {
+                 Kp = 0;
+                 }
+                 forceField = Kp * (position);
+                 //forceField = 0;
+                 
+                 force.add(forceField);
+                 */
+                
+                //Virtual walls for pong game:
+                double Kp; //[N/m]
+                cVector3d forceField;
+                /*if ((position.y() > .05) || (position.y() < -.05) || (position.z() > -.01) || (position.z() < -.025)) {
+                    Kp = -150;
+                } else {
+                    Kp = 0;
+                }*/
+                Kp = -150 * displacement;
+                
+                forceField = Kp * position;
+                force.add(forceField);
+                
+                /*// compute angular torque
+                double Kr = 0.05; // [N/m.rad]
+                cVector3d axis;
+                double angle;
+                cMatrix3d deltaRotation = cTranspose(rotation) * desiredRotation;
+                deltaRotation.toAxisAngle(axis, angle);
+                torque = rotation * ((Kr * angle) * axis);
+                 */
+                 }
+            
+            // apply damping term
+            if (useDamping)
+            {
+                //DAMPING:defined as the ability to resist oscillations.
+                cHapticDeviceInfo info = hapticDevice->getSpecifications();
+                
+                // compute linear damping force
+                double Kv = .3 * info.m_maxLinearDamping;
+                cVector3d forceDamping = -Kv * linearVelocity;
+                force.add(forceDamping);
+                
+                // compute angular damping force
+                double Kvr = 1.0 * info.m_maxAngularDamping;
+                cVector3d torqueDamping = -Kvr * angularVelocity;
+                torque.add(torqueDamping);
+                
+                // compute gripper angular damping force
+                double Kvg = 1.0 * info.m_maxGripperAngularDamping;
+                gripperForce = gripperForce - Kvg * gripperAngularVelocity;
             }
             
-            // compute a boundary box
-            pig4->computeBoundaryBox(true);
+            // send computed force, torque, and gripper force to haptic device
+            hapticDevice->setForceAndTorqueAndGripperForce(force, torque, gripperForce);
             
-            // get dimensions of object
-            double size3 = cSub(pig4->getBoundaryMax(), pig4->getBoundaryMin()).length();
+            // signal frequency counter
+            freqCounterHaptics.signal(1);
             
-            // resize object to screen
-            if (size3 > 0)
-            {
-                pig4->scale( 1.5 / size3);
-            }
-            
-            // setup collision detection algorithm
-            //pig4->createAABBCollisionDetector(toolRadius);
-            
-            pig4->setStiffness(10, true);
-             */
-            
-            //arrow->setLocalPos(0.0, 0.0, 0.0);
+            //arrow stuff
             arrow->setLocalPos(0.0, 0.5, 0.0);
         }
 
