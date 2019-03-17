@@ -140,7 +140,7 @@ cThread* hapticsThread;
 GLFWwindow* window = NULL;
 
 // a flag for using damping (ON/OFF)
-bool useDamping = true;
+bool useDamping = false;
 
 // a flag for using force field (ON/OFF)
 bool useForceField = true;
@@ -836,9 +836,6 @@ void updateHaptics(void)
         // HAPTIC RENDERING
         /////////////////////////////////////////////////////////////////////////
         
-        // signal frequency counter
-        freqCounterHaptics.signal(1);
-        
         // compute global reference frames for each object
         world->computeGlobalPositions(true);
         
@@ -946,6 +943,50 @@ void updateHaptics(void)
             bottom->m_pointA = parent_T_object.getLocalPos();
             
             arrow->setLocalPos(0.0, 0.5, 0.0);
+            
+            
+            cVector3d force (0,0,0);
+            cVector3d torque (0,0,0);
+            double gripperForce = 0.0;
+            
+            if (isPull) {
+                double Kp = -200000; //[N/m]
+                cVector3d forceField;
+                
+                forceField = (Kp * displacement) * position;
+                cout << displacement << endl;
+                force.add(forceField);
+                
+                // compute angular torque
+                double Kr = 0.05; // [N/m.rad]
+                cVector3d axis;
+                double angle;
+                cMatrix3d deltaRotation = cTranspose(rotation) * desiredRotation;
+                deltaRotation.toAxisAngle(axis, angle);
+                torque = rotation * ((Kr * angle) * axis);
+            }
+            
+            if (useDamping)
+            {
+                //DAMPING:defined as the ability to resist oscillations.
+                cHapticDeviceInfo info = hapticDevice->getSpecifications();
+                
+                // compute linear damping force
+                double Kv = .3 * info.m_maxLinearDamping;
+                cVector3d forceDamping = -Kv * linearVelocity;
+                force.add(forceDamping);
+                
+                // compute angular damping force
+                double Kvr = 1.0 * info.m_maxAngularDamping;
+                cVector3d torqueDamping = -Kvr * angularVelocity;
+                torque.add(torqueDamping);
+                
+                // compute gripper angular damping force
+                double Kvg = 1.0 * info.m_maxGripperAngularDamping;
+                gripperForce = gripperForce - Kvg * gripperAngularVelocity;
+            }
+            
+            hapticDevice->setForceAndTorqueAndGripperForce(force, torque, gripperForce);
         }
         
         //
@@ -956,42 +997,24 @@ void updateHaptics(void)
         {
             
             isPull = false;
-            displacement = 0.0;
+            displacement = 100.0;
             state = IDLE;
             top->m_pointB = cVector3d(0,0,0);
             bottom->m_pointA = cVector3d(0,0,0);
             //pig3->setLocalPos(-2.0, 1.0, -3.3);
             arrow->setLocalPos(3.0, 0.5, 0.0);
+            displacement = 0.0;
         }
         
-        cVector3d force (0,0,0);
-        cVector3d torque (0,0,0);
-        double gripperForce = 0.0;
         
-        if (isPull) {
-            double Kp = -150; //[N/m]
-            cVector3d forceField;
-            
-            forceField = (Kp * displacement*1000) * position;
-            cout << displacement << endl;
-            force.add(forceField);
-            
-            // compute angular torque
-            double Kr = 0.05; // [N/m.rad]
-            cVector3d axis;
-            double angle;
-            cMatrix3d deltaRotation = cTranspose(rotation) * desiredRotation;
-            deltaRotation.toAxisAngle(axis, angle);
-            torque = rotation * ((Kr * angle) * axis);
-            hapticDevice->setForceAndTorqueAndGripperForce(force, torque, gripperForce);
-        }
         
         /////////////////////////////////////////////////////////////////////////
         // FINALIZE
         /////////////////////////////////////////////////////////////////////////
-        
         // send forces to haptic device
         tool->applyToDevice();
+        //signal frequency counter
+        freqCounterHaptics.signal(1);
     }
     
     // exit haptics thread
