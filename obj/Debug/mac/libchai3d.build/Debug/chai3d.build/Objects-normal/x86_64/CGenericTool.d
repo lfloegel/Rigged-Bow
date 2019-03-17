@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/larafs/Desktop/chai3d-3.2.0/src/tools/CGenericTool.cpp \
+  /Users/larafs/Desktop/chai3d-3.2.0-A/src/tools/CGenericTool.cpp \
   src/tools/CGenericTool.h src/collisions/CGenericCollision.h \
   src/collisions/CCollisionBasics.h src/math/CVector3d.h \
   src/system/CString.h src/system/CGlobals.h src/math/CConstants.h \

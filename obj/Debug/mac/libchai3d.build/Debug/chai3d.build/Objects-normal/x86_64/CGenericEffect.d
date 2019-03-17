@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/larafs/Desktop/chai3d-3.2.0/src/effects/CGenericEffect.cpp \
+  /Users/larafs/Desktop/chai3d-3.2.0-A/src/effects/CGenericEffect.cpp \
   src/effects/CGenericEffect.h src/math/CVector3d.h src/system/CString.h \
   src/system/CGlobals.h src/math/CConstants.h external/Eigen/Eigen/Eigen \
   external/Eigen/Eigen/Dense external/Eigen/Eigen/Core \

@@ -434,19 +434,19 @@ int main(int argc, char* argv[])
     object->createAABBCollisionDetector(toolRadius);
 
     // enable haptic rendering on both sides of triangles
-    cMaterial mat;
-    mat.setHapticTriangleSides(true, true);
-    object->setMaterial(mat);
+   // cMaterial mat;
+    //mat.setHapticTriangleSides(true, true);
+    //object->setMaterial(mat);
 
     // define some environmental texture mapping
     cTexture2dPtr texture = cTexture2d::create();
 
     // load texture file
-    fileload = texture->loadFromFile(RESOURCE_PATH("../resources/images/chrome.jpg"));
+    fileload = texture->loadFromFile(RESOURCE_PATH("../resources/images/grass.jpg"));
     if (!fileload)
     {
         #if defined(_MSVC)
-        fileload = texture->loadFromFile("../../../bin/resources/images/chrome.jpg");
+        fileload = texture->loadFromFile("../../../bin/resources/images/grass.jpg");
         #endif
     }
     if (!fileload)

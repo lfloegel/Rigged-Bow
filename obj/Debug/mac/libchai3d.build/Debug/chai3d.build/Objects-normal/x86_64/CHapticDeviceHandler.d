@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/larafs/Desktop/chai3d-3.2.0/src/devices/CHapticDeviceHandler.cpp \
+  /Users/larafs/Desktop/chai3d-3.2.0-A/src/devices/CHapticDeviceHandler.cpp \
   src/devices/CHapticDeviceHandler.h src/devices/CGenericHapticDevice.h \
   src/devices/CGenericDevice.h src/math/CConstants.h \
   src/system/CGlobals.h external/Eigen/Eigen/Eigen \

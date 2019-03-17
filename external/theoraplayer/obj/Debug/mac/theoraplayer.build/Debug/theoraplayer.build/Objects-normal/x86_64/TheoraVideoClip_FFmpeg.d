@@ -1,2 +1,2 @@
 dependencies: \
-  /Users/erinpwoo/Desktop/Rigged-Bow/external/theoraplayer/src/FFmpeg/TheoraVideoClip_FFmpeg.cpp
+  /Users/larafs/Desktop/chai3d-3.2.0-A/external/theoraplayer/src/FFmpeg/TheoraVideoClip_FFmpeg.cpp

@@ -1,4 +1,5 @@
-dependencies: /Users/larafs/Desktop/chai3d-3.2.0/src/world/CShapeLine.cpp \
+dependencies: \
+  /Users/larafs/Desktop/chai3d-3.2.0-A/src/world/CShapeLine.cpp \
   src/world/CShapeLine.h src/world/CGenericObject.h \
   src/collisions/CCollisionBasics.h src/math/CVector3d.h \
   src/system/CString.h src/system/CGlobals.h src/math/CConstants.h \

@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/larafs/Desktop/chai3d-3.2.0/src/graphics/CPrimitives.cpp \
+  /Users/larafs/Desktop/chai3d-3.2.0-A/src/graphics/CPrimitives.cpp \
   src/graphics/CPrimitives.h src/world/CMesh.h \
   src/world/CGenericObject.h src/collisions/CCollisionBasics.h \
   src/math/CVector3d.h src/system/CString.h src/system/CGlobals.h \

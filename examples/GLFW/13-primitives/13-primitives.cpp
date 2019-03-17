@@ -83,7 +83,7 @@ cCamera* camera;
 cShapeSphere* b1;
 cShapeSphere* b2;
 // a light source to illuminate the objects in the world
-cSpotLight *light;
+cDirectionalLight *light;
 
 // a haptic device handler
 cHapticDeviceHandler* handler;
@@ -95,20 +95,18 @@ cGenericHapticDevicePtr hapticDevice;
 cToolCursor* tool;
 
 // a few objects that are placed in the scene
-//cMesh* base;
-//cMesh* teaPot;
-cMesh* cylinder;
-//cMesh* cone;
-//cMultiSegment* segments;
+//cMesh* cylinder;
 cMultiMesh* bow;
 cMultiMesh* pig;
 cMultiMesh* pig2;
 cMultiMesh* pig3;
 cMultiMesh* arrow;
+cMultiMesh* object;
 
 cShapeLine* top;
 
 cShapeLine* bottom;
+
 // a colored background
 cBackground* background;
 
@@ -316,30 +314,21 @@ int main(int argc, char* argv[])
     camera->setMirrorVertical(mirroredDisplay);
 
     // create a light source
-    light = new cSpotLight(world);
-
+    light = new cDirectionalLight(world);
+    
     // attach light to camera
-    world->addChild(light);
-
+    camera->addChild(light);
+    
     // enable light source
     light->setEnabled(true);
-
-    // position the light source
-    light->setLocalPos(0.6, 0.6, 0.5);
-
+    
     // define the direction of the light beam
-    light->setDir(-0.5,-0.5,-0.5);
-
-    // enable this light source to generate shadows
-    light->setShadowMapEnabled(true);
-
-    // set the resolution of the shadow map
-    //light->m_shadowMap->setQualityLow();
-    light->m_shadowMap->setQualityMedium();
-
-    // set light cone half angle
-    light->setCutOffAngleDeg(90);
-
+    light->setDir(-3.0,-0.5, 0.0);
+    
+    // set lighting conditions
+    light->m_ambient.set(0.4f, 0.4f, 0.4f);
+    light->m_diffuse.set(0.8f, 0.8f, 0.8f);
+    light->m_specular.set(0.1f, 0.2f, 0.1f);
 
     //--------------------------------------------------------------------------
     // HAPTIC DEVICES / TOOLS
@@ -379,7 +368,7 @@ int main(int argc, char* argv[])
     tool->setWorkspaceRadius(1.0);
 
     // define the radius of the tool (sphere)
-    double toolRadius = 0.05;
+    double toolRadius = 0.03;
 
     // define a radius for the tool
     tool->setRadius(toolRadius);
@@ -411,72 +400,6 @@ int main(int argc, char* argv[])
 
     // stiffness properties
     double maxStiffness	= hapticDeviceInfo.m_maxLinearStiffness / workspaceScaleFactor;
-
-/*
-    /////////////////////////////////////////////////////////////////////////
-    // BASE
-    /////////////////////////////////////////////////////////////////////////
-
-    // create a mesh
-    cMesh* base = new cMesh();
-
-    // add object to world
-    world->addChild(base);
-
-    // build mesh using a cylinder primitive
-    cCreateCylinder(base,
-                    0.01,
-                    0.5,
-                    36,
-                    1,
-                    10,
-                    true,
-                    true,
-                    cVector3d(0.0, 0.0,-0.01),
-                    cMatrix3d(cDegToRad(0), cDegToRad(0), cDegToRad(0), C_EULER_ORDER_XYZ)
-                    );
-
-    // set material properties
-    base->m_material->setGrayGainsboro();
-    base->m_material->setStiffness(0.5 * maxStiffness);
-
-    // build collision detection tree
-    base->createAABBCollisionDetector(toolRadius);
-
-    // use display list to optimize graphic rendering performance
-    base->setUseDisplayList(true);
- 
-    /////////////////////////////////////////////////////////////////////////
-    // TEA POT
-    /////////////////////////////////////////////////////////////////////////
-
-    // create a mesh
-    cMesh* teaPot = new cMesh();
-
-    // add object to world
-    base->addChild(teaPot);
-
-    // build mesh using a cylinder primitive
-    cCreateTeaPot(teaPot,
-                    0.5,
-                    4,
-                    cVector3d(0.0, 0.0, 0.0),
-                    cMatrix3d(cDegToRad(0), cDegToRad(0), cDegToRad(-90), C_EULER_ORDER_XYZ)
-                    );
-
-    // position object
-    teaPot->setLocalPos(0.1, 0.2, 0.0);
-
-    // set material properties
-    teaPot->m_material->setRedDark();
-    teaPot->m_material->setStiffness(0.5 * maxStiffness);
-
-    // build collision detection tree
-    teaPot->createAABBCollisionDetector(toolRadius);
-
-    // use display list to optimize graphic rendering performance
-    teaPot->setUseDisplayList(true);
-*/
 
     /////////////////////////////////////////////////////////////////////////
     // BOW
@@ -533,66 +456,22 @@ int main(int argc, char* argv[])
     /////////////////////////////////////////////////////////////////////////
     
     // create a virtual mesh
-    pig = new cMultiMesh();
-    
-    // add object to world
-    world->addChild(pig);
-    
-    // set the position of bow object at the center of the world
-    pig->setLocalPos(-3.0, -2.0, -3.0);
-    pig->rotateAboutGlobalAxisDeg(cVector3d(1,1,1.5), 90);
-    //pig->rotateAboutGlobalAxisDeg(cVector3d(0,0,0), 180);
-    
-    // load an object file
-    fileload = pig->loadFromFile(RESOURCE_PATH("../resources/models/turntable/pig.obj"));
-    if (!fileload)
-    {
-    #if defined(_MSVC)
-        fileload = pig->loadFromFile("../../../bin/resources/models/turntable/pig.obj");
-    #endif
-    }
-    if (!fileload)
-    {
-        printf("Error - 3D Model failed to load correctly.\n");
-        close();
-        return (-1);
-    }
-    
-    // compute a boundary box
-    pig->computeBoundaryBox(true);
-    
-    // get dimensions of object
-    double size2 = cSub(pig->getBoundaryMax(), pig->getBoundaryMin()).length();
-    
-    // resize object to screen
-    if (size2 > 0)
-    {
-        pig->scale( 1.0 / size2);
-    }
-    
-    // setup collision detection algorithm
-    pig->createAABBCollisionDetector(toolRadius);
-    
-    // define a default stiffness for the object
-    pig->setStiffness(0.8 * maxStiffness, true);
-    
-    // create a virtual mesh
     pig2 = new cMultiMesh();
     
     // add object to world
     world->addChild(pig2);
     
     // set the position of bow object at the center of the world
-    pig2->setLocalPos(-2.8, 2.7, -3.3);
-    pig2->rotateAboutGlobalAxisDeg(cVector3d(1,0,0), 90);
-    //pig->rotateAboutGlobalAxisDeg(cVector3d(0,0,0), 180);
+    pig2->setLocalPos(-5.0, 3, -3.3);
+    pig2->rotateAboutGlobalAxisDeg(cVector3d(0,0,1), 90);
+    pig2->rotateAboutGlobalAxisDeg(cVector3d(0,1,0), -10);
     
     // load an object file
-    fileload = pig2->loadFromFile(RESOURCE_PATH("../resources/models/turntable/pig.obj"));
+    fileload = pig2->loadFromFile(RESOURCE_PATH("../resources/models/hubble/pig2.3ds"));
     if (!fileload)
     {
     #if defined(_MSVC)
-        fileload = pig2->loadFromFile("../../../bin/resources/models/turntable/pig.obj");
+        fileload = pig2->loadFromFile("../resources/models/hubble/pig2.3ds");
     #endif
     }
     if (!fileload)
@@ -619,49 +498,6 @@ int main(int argc, char* argv[])
     
     // define a default stiffness for the object
     pig2->setStiffness(0.8 * maxStiffness, true);
-    
-    // create a virtual mesh
-    pig3 = new cMultiMesh();
-    
-    // add object to world
-    world->addChild(pig3);
-    
-    // set the position of bow object at the center of the world
-    pig3->setLocalPos(-2.0, 1.0, -3.3);
-    pig3->rotateAboutGlobalAxisDeg(cVector3d(1,0,1), 90);
-    //pig->rotateAboutGlobalAxisDeg(cVector3d(0,0,0), 180);
-    
-    // load an object file
-    fileload = pig3->loadFromFile(RESOURCE_PATH("../resources/models/turntable/pig.obj"));
-    if (!fileload)
-    {
-    #if defined(_MSVC)
-        fileload = pig3->loadFromFile("../../../bin/resources/models/turntable/pig.obj");
-    #endif
-    }
-    if (!fileload)
-    {
-        printf("Error - 3D Model failed to load correctly.\n");
-        close();
-        return (-1);
-    }
-    
-    // compute a boundary box
-    pig3->computeBoundaryBox(true);
-    
-    // get dimensions of object
-    size3 = cSub(pig3->getBoundaryMax(), pig3->getBoundaryMin()).length();
-    
-    // resize object to screen
-    if (size3 > 0)
-    {
-        pig3->scale( 1.5 / size3);
-    }
-    
-    // setup collision detection algorithm
-    pig3->createAABBCollisionDetector(toolRadius);
-
-    pig3->setStiffness(0.8 * maxStiffness, true);
     
     /////////////////////////////////////////////////////////////////////////
     // ARROW
@@ -710,130 +546,6 @@ int main(int argc, char* argv[])
     
     arrow->setStiffness(0.8 * maxStiffness, true);
     
-    
-/*
-    // create a mesh
-    cMesh*  cylinder = new cMesh();
-
-    // add object to world
-    world->addChild(cylinder);
-    
-    // build mesh using a cylinder primitive
-    cCreatePipe(cylinder,
-               0.1,
-                0.001,
-                0.1,
-                32,
-                1,
-                cVector3d(-0.05,-0.20, 0.0),
-                cMatrix3d(cDegToRad(0), cDegToRad(0), cDegToRad(170), C_EULER_ORDER_XYZ)
-                );
-
-    // set material properties
-    //cylinder->m_material->setRedDark();
-    cylinder->m_material->setStiffness(0.5 * maxStiffness);
-
-    // build collision detection tree
-    cylinder->createAABBCollisionDetector(toolRadius);
-
-    // use display list to optimize graphic rendering performance
-    cylinder->setUseDisplayList(true);
-*/
-/*
-    /////////////////////////////////////////////////////////////////////////
-    // CONE
-    /////////////////////////////////////////////////////////////////////////
-
-    // create a mesh
-    cMesh* cone = new cMesh();
-
-    // add object to world
-    //base->addChild(cone);
-    world->addChild(cone);
-
-    // build mesh using a cylinder primitive
-    cCreateCone(cone, 
-                0.15,
-                0.05,
-                0.01,
-                32,
-                1,
-                1,
-                true,
-                true,
-                cVector3d(0.30, 0.0, 0.0), 
-                cMatrix3d(cDegToRad(0), cDegToRad(0), cDegToRad(0), C_EULER_ORDER_XYZ)
-                );
-
-    // set material properties
-    cone->m_material->setGreenForest();
-    cone->m_material->setStiffness(0.5 * maxStiffness);
-
-    // build collision detection tree
-    cone->createAABBCollisionDetector(toolRadius);
-
-    // use display list to optimize graphic rendering performance
-    cone->setUseDisplayList(true);
-
-    /////////////////////////////////////////////////////////////////////////
-    // SEGMENTS
-    /////////////////////////////////////////////////////////////////////////
-
-    // create a line segment object
-    cMultiSegment* segments = new cMultiSegment();
-
-    // add object to world
-    base->addChild(segments);
-
-    // build some segment
-    double l = 0.0;
-    double dl = 0.001;
-    double a = 0.0;
-    double da = 0.2;
-    double r = 0.05;
-    for (int i=0; i<200; i++)
-    {
-        double px0 = r * cos(a);
-        double py0 = r * sin(a);
-        double pz0 = l;
-
-        double px1 = r * cos(a+da);
-        double py1 = r * sin(a+da);
-        double pz1 = l+dl;
-
-        // create vertex 0
-        int index0 = segments->newVertex(px0, py0, pz0);
-
-        // create vertex 1
-        int index1 = segments->newVertex(px1, py1, pz1);
-
-        // create segment
-        segments->newSegment(index0, index1);
-
-        l = l + dl;
-        a = a + da;
-    }
-
-    // set haptic properties
-    segments->m_material->setStiffness(0.5 * maxStiffness);
-
-    // position object
-    segments->setLocalPos(0.22,-0.22, 0.0);
-
-    // set segment properties
-    cColorf color;
-    color.setYellowGold();
-    segments->setLineColor(color);
-    segments->setLineWidth(4.0);
-    segments->setUseDisplayList(true);
-
-    // build collision detection tree
-    segments->createAABBCollisionDetector(toolRadius);
-
-    // use display list to optimize graphic rendering performance
-    segments->setUseDisplayList(true);
-*/
-
     //--------------------------------------------------------------------------
     // CREATE SHADERS
     //--------------------------------------------------------------------------
@@ -848,12 +560,10 @@ int main(int argc, char* argv[])
     tool->setShaderProgram(shaderProgram);
     world->setShaderProgram(shaderProgram);
     bow->setShaderProgram(shaderProgram);
-    pig->setShaderProgram(shaderProgram);
-    pig2->setShaderProgram(shaderProgram);
-    pig3->setShaderProgram(shaderProgram);
+    //pig->setShaderProgram(shaderProgram);
+    //pig2->setShaderProgram(shaderProgram);
+    //pig3->setShaderProgram(shaderProgram);
     arrow->setShaderProgram(shaderProgram);
-    //cylinder->setShaderProgram(shaderProgram);
-    //cone->setShaderProgram(shaderProgram);
 
 
     //--------------------------------------------------------------------------
@@ -999,7 +709,7 @@ void keyCallback(GLFWwindow* a_window, int a_key, int a_scancode, int a_action, 
     else if (a_key == GLFW_KEY_S)
     {
         cImagePtr image = cImage::create();
-        light->m_shadowMap->copyDepthBuffer(image);
+        //light->m_shadowMap->copyDepthBuffer(image);
         image->saveToFile("shadowmapshot.png");
         cout << "> Saved screenshot of shadowmap to file.       \r";
     }

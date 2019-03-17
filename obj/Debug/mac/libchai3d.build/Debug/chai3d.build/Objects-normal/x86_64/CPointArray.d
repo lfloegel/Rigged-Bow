@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/larafs/Desktop/chai3d-3.2.0/src/graphics/CPointArray.cpp \
+  /Users/larafs/Desktop/chai3d-3.2.0-A/src/graphics/CPointArray.cpp \
   src/graphics/CPointArray.h src/graphics/CGenericArray.h \
   src/math/CGeometry.h src/math/CPolySolver.h src/math/CMaths.h \
   src/math/CTransform.h src/math/CMatrix3d.h src/math/CConstants.h \

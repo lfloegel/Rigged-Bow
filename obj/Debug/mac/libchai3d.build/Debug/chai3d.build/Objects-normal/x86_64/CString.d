@@ -1,4 +1,4 @@
-dependencies: /Users/larafs/Desktop/chai3d-3.2.0/src/system/CString.cpp \
+dependencies: /Users/larafs/Desktop/chai3d-3.2.0-A/src/system/CString.cpp \
   src/system/CString.h src/math/CMaths.h src/math/CTransform.h \
   src/math/CMatrix3d.h src/math/CConstants.h src/system/CGlobals.h \
   external/Eigen/Eigen/Eigen external/Eigen/Eigen/Dense \

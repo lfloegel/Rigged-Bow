@@ -1,5 +1,5 @@
 dependencies: \
-  /Users/larafs/Desktop/chai3d-3.2.0/src/tools/CToolGripper.cpp \
+  /Users/larafs/Desktop/chai3d-3.2.0-A/src/tools/CToolGripper.cpp \
   src/tools/CToolGripper.h src/tools/CGenericTool.h \
   src/collisions/CGenericCollision.h src/collisions/CCollisionBasics.h \
   src/math/CVector3d.h src/system/CString.h src/system/CGlobals.h \
