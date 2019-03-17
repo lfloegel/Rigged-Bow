@@ -839,9 +839,6 @@ void updateHaptics(void)
         // HAPTIC RENDERING
         /////////////////////////////////////////////////////////////////////////
 
-        // signal frequency counter
-        freqCounterHaptics.signal(1);
-
         // compute global reference frames for each object
         world->computeGlobalPositions(true);
 
@@ -851,6 +848,10 @@ void updateHaptics(void)
         // compute interaction forces
         tool->computeInteractionForces();
 
+        
+        // read position
+        cVector3d position;
+        hapticDevice->getPosition(position);
  
         cMatrix3d rotation;
         hapticDevice->getRotation(rotation);
@@ -934,6 +935,19 @@ void updateHaptics(void)
 //            // set zero forces when manipulating objects
 //            tool->setDeviceGlobalForce(0.0, 0.0, 0.0);
             
+            /////////////////////////////////////////////////////////////////////
+            // COMPUTE AND APPLY FORCES
+            /////////////////////////////////////////////////////////////////////
+            
+            // desired position
+            cVector3d desiredPosition;  //set desired position to position detected by device
+            desiredPosition = position;
+            
+            // desired orientation
+            cMatrix3d desiredRotation;
+            desiredRotation.identity();
+            
+            
             cVector3d position;
             hapticDevice->getPosition(position);
             
@@ -942,10 +956,12 @@ void updateHaptics(void)
             top->m_pointB = parent_T_object.getLocalPos();
             bottom->m_pointA = parent_T_object.getLocalPos();
             
+            // variables for forces
             cVector3d force (0,0,0);
             cVector3d torque (0,0,0);
             double gripperForce = 0.0;
             
+            // apply force field
             if (useForceField)
             {
                 // compute linear force
@@ -964,30 +980,26 @@ void updateHaptics(void)
                  //forceField = 0;
                  
                  force.add(forceField);
-                 */
-                
+                */
+                useForceField = true;
                 //Virtual walls for pong game:
-                double Kp; //[N/m]
+                double Kp = -150; //[N/m]
                 cVector3d forceField;
-                /*if ((position.y() > .05) || (position.y() < -.05) || (position.z() > -.01) || (position.z() < -.025)) {
-                    Kp = -150;
-                } else {
-                    Kp = 0;
-                }*/
-                Kp = -150 * displacement;
                 
-                forceField = Kp * position;
+                forceField = (Kp * displacement*1000) * position;
+                cout << displacement << endl;
                 force.add(forceField);
                 
-                /*// compute angular torque
+                // compute angular torque
                 double Kr = 0.05; // [N/m.rad]
                 cVector3d axis;
                 double angle;
                 cMatrix3d deltaRotation = cTranspose(rotation) * desiredRotation;
                 deltaRotation.toAxisAngle(axis, angle);
                 torque = rotation * ((Kr * angle) * axis);
-                 */
-                 }
+                
+            }
+            
             
             // apply damping term
             if (useDamping)
@@ -1013,8 +1025,13 @@ void updateHaptics(void)
             // send computed force, torque, and gripper force to haptic device
             hapticDevice->setForceAndTorqueAndGripperForce(force, torque, gripperForce);
             
+
+            // send forces to haptic device
+            tool->applyToDevice();
             // signal frequency counter
             freqCounterHaptics.signal(1);
+            
+            hapticDevice->setForceAndTorqueAndGripperForce(force, torque, gripperForce);
             
             //arrow stuff
             arrow->setLocalPos(0.0, 0.5, 0.0);
@@ -1032,14 +1049,6 @@ void updateHaptics(void)
             //pig3->setLocalPos(-2.0, 1.0, -3.3);
             arrow->setLocalPos(3.0, 0.5, 0.0);
         }
-
-
-        /////////////////////////////////////////////////////////////////////////
-        // FINALIZE
-        /////////////////////////////////////////////////////////////////////////
-
-        // send forces to haptic device
-        tool->applyToDevice();  
     }
     
     // exit haptics thread
