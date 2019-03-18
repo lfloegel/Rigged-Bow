@@ -939,8 +939,8 @@ void updateHaptics(void)
             cVector3d position;
             hapticDevice->getPosition(position);
             
-            top->m_pointB = parent_T_object.getLocalPos();
-            bottom->m_pointA = parent_T_object.getLocalPos();
+            top->m_pointB = world_T_tool.getLocalPos();
+            bottom->m_pointA = world_T_tool.getLocalPos();
         }
         
         //
@@ -982,7 +982,7 @@ void updateHaptics(void)
             //ADJUSTING KP: AFFECTS STIFFNESS OF DEVICE AND HOW IT'S RESISTANCE TO BEING MOVED FROM ITS ORIGINAL POSITION (0,0,0)
             
             //Virtual walls for pong game:
-            double Kp = -500; //[N/m]
+            double Kp = -800; //[N/m]
             cVector3d forceField;
 
             forceField = Kp * position;
