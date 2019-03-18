@@ -887,6 +887,48 @@ void updateHaptics(void)
         // get status of user switch
         bool button = tool->getUserSwitch(0);
         
+        
+        cVector3d force (0,0,0);
+        cVector3d torque (0,0,0);
+        double gripperForce = 0.0;
+        /*
+        if (useForceField) {
+            double Kp = -200; //[N/m]
+            cVector3d forceField;
+            
+            forceField = Kp * position;
+            cout << displacement << endl;
+            force.add(forceField);
+            
+            // compute angular torque
+            double Kr = 0.05; // [N/m.rad]
+            cVector3d axis;
+            double angle;
+            cMatrix3d deltaRotation = cTranspose(rotation) * desiredRotation;
+            deltaRotation.toAxisAngle(axis, angle);
+            torque = rotation * ((Kr * angle) * axis);
+        }
+        
+        if (useDamping)
+        {
+            //DAMPING:defined as the ability to resist oscillations.
+            cHapticDeviceInfo info = hapticDevice->getSpecifications();
+            
+            // compute linear damping force
+            double Kv = .3 * info.m_maxLinearDamping;
+            cVector3d forceDamping = -Kv * linearVelocity;
+            force.add(forceDamping);
+            
+            // compute angular damping force
+            double Kvr = 1.0 * info.m_maxAngularDamping;
+            cVector3d torqueDamping = -Kvr * angularVelocity;
+            torque.add(torqueDamping);
+            
+            // compute gripper angular damping force
+            double Kvg = 1.0 * info.m_maxGripperAngularDamping;
+            gripperForce = gripperForce - Kvg * gripperAngularVelocity;
+        }*/
+        
         //
         // STATE 1:
         // Idle mode - user presses the user switch
@@ -896,7 +938,8 @@ void updateHaptics(void)
             // check if at least one contact has occurred
             if (tool->m_hapticPoint->getNumCollisionEvents() > 0)
             {
-                isPull = true;
+                useDamping = true;
+                useForceField = true;
                 hapticDevice -> getPosition(init_pos); //sets initial position to where they first press button
                 
                 // get contact event
@@ -944,48 +987,6 @@ void updateHaptics(void)
             
             arrow->setLocalPos(0.0, 0.5, 0.0);
             
-            
-            cVector3d force (0,0,0);
-            cVector3d torque (0,0,0);
-            double gripperForce = 0.0;
-            
-            if (isPull) {
-                double Kp = -200000; //[N/m]
-                cVector3d forceField;
-                
-                forceField = (Kp * displacement) * position;
-                cout << displacement << endl;
-                force.add(forceField);
-                
-                // compute angular torque
-                double Kr = 0.05; // [N/m.rad]
-                cVector3d axis;
-                double angle;
-                cMatrix3d deltaRotation = cTranspose(rotation) * desiredRotation;
-                deltaRotation.toAxisAngle(axis, angle);
-                torque = rotation * ((Kr * angle) * axis);
-            }
-            
-            if (useDamping)
-            {
-                //DAMPING:defined as the ability to resist oscillations.
-                cHapticDeviceInfo info = hapticDevice->getSpecifications();
-                
-                // compute linear damping force
-                double Kv = .3 * info.m_maxLinearDamping;
-                cVector3d forceDamping = -Kv * linearVelocity;
-                force.add(forceDamping);
-                
-                // compute angular damping force
-                double Kvr = 1.0 * info.m_maxAngularDamping;
-                cVector3d torqueDamping = -Kvr * angularVelocity;
-                torque.add(torqueDamping);
-                
-                // compute gripper angular damping force
-                double Kvg = 1.0 * info.m_maxGripperAngularDamping;
-                gripperForce = gripperForce - Kvg * gripperAngularVelocity;
-            }
-            
             hapticDevice->setForceAndTorqueAndGripperForce(force, torque, gripperForce);
         }
         
@@ -996,8 +997,8 @@ void updateHaptics(void)
         else
         {
             
-            isPull = false;
-            displacement = 100.0;
+            useDamping = false;
+            useForceField = false;
             state = IDLE;
             top->m_pointB = cVector3d(0,0,0);
             bottom->m_pointA = cVector3d(0,0,0);
