@@ -828,6 +828,7 @@ void updateHaptics(void)
     // simulation in now running
     simulationRunning  = true;
     simulationFinished = false;
+    bool release = false;
     
     // main haptic simulation loop
     while(simulationRunning)
@@ -847,6 +848,34 @@ void updateHaptics(void)
         
         // compute interaction forces
         tool->computeInteractionForces();
+        
+        /////////////////////////////////////////////////////////////////////
+        // READ HAPTIC DEVICE
+        /////////////////////////////////////////////////////////////////////
+        
+        // read position
+        cVector3d position;
+        hapticDevice->getPosition(position);
+        
+        // read orientation
+        cMatrix3d rotation;
+        hapticDevice->getRotation(rotation);
+        
+        // read gripper position
+        double gripperAngle;
+        hapticDevice->getGripperAngleRad(gripperAngle);
+        
+        // read linear velocity
+        cVector3d linearVelocity;
+        hapticDevice->getLinearVelocity(linearVelocity);
+        
+        // read angular velocity
+        cVector3d angularVelocity;
+        hapticDevice->getAngularVelocity(angularVelocity);
+        
+        // read gripper angular velocity
+        double gripperAngularVelocity;
+        hapticDevice->getGripperAngularVelocity(gripperAngularVelocity);
         
         
         /////////////////////////////////////////////////////////////////////////
@@ -868,7 +897,7 @@ void updateHaptics(void)
             // check if at least one contact has occurred
             if (tool->m_hapticPoint->getNumCollisionEvents() > 0)
             {
-                
+                release = false;
                 // get contact event
                 cCollisionEvent* collisionEvent = tool->m_hapticPoint->getCollisionEvent(0);
                 
@@ -896,6 +925,9 @@ void updateHaptics(void)
         //
         else if ((state == SELECTION) && (button == true))
         {
+            release = false;
+            useForceField = true;
+            useDamping = true;
             //compute new tranformation of object in global coordinates
             cTransform world_T_object = world_T_tool * tool_T_object;
             
@@ -903,12 +935,6 @@ void updateHaptics(void)
             cTransform parent_T_world = object->getParent()->getLocalTransform();
             parent_T_world.invert();
             cTransform parent_T_object = parent_T_world * world_T_object;
-            
-            // assign new local transformation to object
-            //object->setLocalTransform(parent_T_object);
-            //
-            //            // set zero forces when manipulating objects
-            //            tool->setDeviceGlobalForce(0.0, 0.0, 0.0);
             
             cVector3d position;
             hapticDevice->getPosition(position);
@@ -923,18 +949,87 @@ void updateHaptics(void)
         //
         else
         {
+            //useForceField = false;
+            release = true;
             state = IDLE;
             top->m_pointB = cVector3d(0,0,0);
             bottom->m_pointA = cVector3d(0,0,0);
+            
         }
         
+        
+        /////////////////////////////////////////////////////////////////////
+        // COMPUTE AND APPLY FORCES
+        /////////////////////////////////////////////////////////////////////
+        
+        // desired position
+        cVector3d desiredPosition;  //set desired position to position detected by device
+        desiredPosition = position;
+        
+        // desired orientation
+        cMatrix3d desiredRotation;
+        desiredRotation.identity();
+        
+        // variables for forces
+        cVector3d force (0,0,0);
+        cVector3d torque (0,0,0);
+        double gripperForce = 0.0;
+        
+        // apply force field
+        if (useForceField)
+        {
+            // compute linear force
+            //ADJUSTING KP: AFFECTS STIFFNESS OF DEVICE AND HOW IT'S RESISTANCE TO BEING MOVED FROM ITS ORIGINAL POSITION (0,0,0)
+            
+            //Virtual walls for pong game:
+            double Kp = -500; //[N/m]
+            cVector3d forceField;
+
+            forceField = Kp * position;
+            force.add(forceField);
+            
+            // compute angular torque
+            double Kr = 0.05; // [N/m.rad]
+            cVector3d axis;
+            double angle;
+            cMatrix3d deltaRotation = cTranspose(rotation) * desiredRotation;
+            deltaRotation.toAxisAngle(axis, angle);
+            torque = rotation * ((Kr * angle) * axis);
+        }
+        
+        // apply damping term
+        if (useDamping)
+        {
+            //DAMPING:defined as the ability to resist oscillations.
+            cHapticDeviceInfo info = hapticDevice->getSpecifications();
+            
+            // compute linear damping force
+            double Kv = .3 * info.m_maxLinearDamping;
+            cVector3d forceDamping = -Kv * linearVelocity;
+            force.add(forceDamping);
+            
+            // compute angular damping force
+            double Kvr = 1.0 * info.m_maxAngularDamping;
+            cVector3d torqueDamping = -Kvr * angularVelocity;
+            torque.add(torqueDamping);
+            
+            // compute gripper angular damping force
+            double Kvg = 1.0 * info.m_maxGripperAngularDamping;
+            gripperForce = gripperForce - Kvg * gripperAngularVelocity;
+        }
+        
+        // send computed force, torque, and gripper force to haptic device
+        hapticDevice->setForceAndTorqueAndGripperForce(force, torque, gripperForce);
         
         /////////////////////////////////////////////////////////////////////////
         // FINALIZE
         /////////////////////////////////////////////////////////////////////////
-        
+        if (release) {
+            useDamping = false;
+            useForceField = false;
+        }
         // send forces to haptic device
-        tool->applyToDevice();
+        //tool->applyToDevice();
     }
     
     // exit haptics thread
